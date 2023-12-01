@@ -37,9 +37,14 @@ const numberWords = {
   nine: "9",
 };
 
+// solved the example problem with this, but there are some weird edge cases
+// getCalibrationValue => replaces all occurrences of number words with their digit equivalent
 function getCalibrationValue(str) {
   for (let word in numberWords) {
-    const regex = new RegExp(Object.keys(numberWords).join("|"), "gi");
+    const regex = new RegExp(
+      "\\b(" + Object.keys(numberWords).join("|") + ")\\b",
+      "gi"
+    );
     str = str.replace(regex, (match) => numberWords[match.toLowerCase()]);
     const digits = str.match(/\d/g);
     str = str.replace(regex, numberWords[word]);
@@ -54,13 +59,47 @@ function getCalibrationValue(str) {
   }
 }
 
-function partTwo(data) {
+function partTwoTwo(data) {
+  // loops over an array of strings (data), but for each string, it directly calls getCalibrationValue and adds the returned value to a total. It then returns this total.
   let total = 0;
   for (let line of data) {
-    total += getCalibrationValue(line);
-    console.log(line);
-    console.log(getCalibrationValue(line));
+    const value = getCalibrationValue(line);
+    console.log(`Processing line: ${line}, value: ${value}`);
+    total += value;
   }
+  console.log(`Total: ${total}`);
   return total;
+}
+
+const getCalibrationTotal = (values) => {
+  // For each array, it multiplies the first number by 10 and adds the last number. It then sums up all these results to get a total.
+  return values.reduce(
+    (sum, current) => sum + current.at(0) * 10 + current.at(-1),
+    0
+  );
+};
+
+function partTwo(data) {
+  const letterNumbers = [
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+  ];
+
+  const numbers = data.map((line) =>
+    [...line.matchAll(/(?=(\d|one|two|three|four|five|six|seven|eight|nine))/g)]
+      .map((match) => match[1])
+      .map((n) => (/\d/.test(n) ? Number(n) : letterNumbers.indexOf(n) + 1))
+  );
+
+  //   For each string, it finds all occurrences of digits or spelled out numbers (from "one" to "nine"). It then converts these matches into actual numbers (with spelled out numbers being converted to their numeric equivalents). The result is an array of arrays of numbers.
+  console.log(getCalibrationTotal(numbers));
+  return getCalibrationTotal(numbers);
 }
 module.exports = { partOne, partTwo, pullOutNumbers };
