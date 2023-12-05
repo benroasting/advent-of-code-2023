@@ -10,5 +10,9 @@
   },
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "commander": "^11.1.0"
   }
 }
